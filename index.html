@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Learning Upright and Forward-Facing Object Poses using Category-level Canonical Representations">
+  <!-- <meta name="keywords" content="Aligning with Human Preference,Point Cloud Canonicalization;"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Learning Upright and Forward-Facing Object Poses using Category-level Canonical Representations</title>
+
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<head>
+  <script type="text/javascript" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+</head>
+     
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Learning Upright and Forward-Facing Object Poses using Category-level Canonical Representations</h1>
+          
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Bing Han,</span>
+            <span class="author-block">Ruitao Pan,</span>
+            <span class="author-block">Xinyu Zhang,</span>
+            <span class="author-block">Chenxi Wang,</span>
+            <span class="author-block">Zhi Zhai,</span>
+            <span class="author-block">Zhibin Zhao*,</span>
+            <span class="author-block">Xuefeng Chen</span>
+          </div>
+
+          <div class="is-size-5 publication-affiliations">
+            <span class="affiliation-block">Xi'an Jiaotong University</span>
+          </div> 
+
+          <!-- 链接按钮 -->
+          <div class="publication-links">
+            <!-- Code Link -->
+            <span class="link-block">
+              <a href="https://github.com/anon-mity/upright_code"
+                 class="external-link button is-normal is-rounded is-dark">
+                <span class="icon"><i class="fab fa-github"></i></span>
+                <span>Code</span>
+              </a>
+            </span>
+
+            <!-- Dataset Link -->
+            <span class="link-block">
+              <a href="https://github.com/anon-mity/upright_code"
+                 class="external-link button is-normal is-rounded is-dark is-disabled"
+                 aria-disabled="true"> <!-- 推荐使用禁用状态 -->
+                <span class="icon"><i class="far fa-images"></i></span>
+                <span>Data</span>
+              </a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!--
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video id="teaser" autoplay muted loop playsinline height="100%">
+        <source src="./static/videos/teaser.mp4"
+                type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered">
+        <span class="dnerf">Nerfies</span> turns selfie videos from your phone into
+        free-viewpoint
+        portraits.
+      </h2>
+    </div>
+  </div>
+</section>-->
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img id="teaser-image" src="./static/images/img1.png" alt="Nerfies teaser" height="100%">
+      <p class="content has-text-justified">
+      <strong> TL;DR: </strong> We propose a category-level point cloud canonicalization method that learns a unified canonical pose across different instances within the same category.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!--
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item item-steve">
+          <video poster="" id="steve" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/steve.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-chair-tp">
+          <video poster="" id="chair-tp" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/chair-tp.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-shiba">
+          <video poster="" id="shiba" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/shiba.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-fullbody">
+          <video poster="" id="fullbody" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/fullbody.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-blueshirt">
+          <video poster="" id="blueshirt" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/blueshirt.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-mask">
+          <video poster="" id="mask" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/mask.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-coffee">
+          <video poster="" id="coffee" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/coffee.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-toby">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/toby2.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+-->
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Constructing a unified canonical pose representation for 3D object categories is crucial for pose estimation and robotic scene understanding. 
+            Previous unified pose representations often relied on manual alignment, such as in ShapeNet and ModelNet.  Recently, self-supervised canonicalization methods have been proposed, 
+            However, they are sensitive to intra-class shape variations, and their canonical pose representations cannot be aligned to a coordinate system centered on the object.
+            
+          </p>
+          <p>
+           In this paper, we propose a category-level canonicalization method that alleviates the impact of shape variation and extends the canonical pose representation to an upright and forward-facing state. 
+            First, we design a Siamese VN Module (SVNM) that achieves SE(3) equivariance modeling and self-supervised disentangling of 3D shape and pose attributes.    
+            Next, we introduce a Siamese equivariant constraint that addresses the pose alignment bias caused by shape deformation. 
+            Finally, we propose a method to generate upright surface labels from pose-unknown in-the-wild data and use upright and symmetry losses to correct the canonical pose.  
+          </p>
+          <p>
+           Experimental results show that our method not only achieves SOTA consistency performance but also aligns with the object-centered coordinate system.
+          </p>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Video</h2>
+        <div class="publication-video">
+          <iframe src="https://www.youtube.com/embed/MrKrnHhk8IA?rel=0&amp;showinfo=0"
+                  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>Paper video. -->
+
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3" style="text-align: center;">Overview</h2>
+    <div class="hero-body">
+      <img id="teaser-image" src="./static/images/img2.png" alt="Nerfies teaser" height="100%">
+      <p class="content has-text-justified">
+      <strong> Overall architecture. </strong>  \(X \rightarrow \widetilde{X}\): Learning neutral canonical representations of point clouds with arbitrary input poses. 
+      \(\widetilde{X} \rightarrow \widehat{X}\): Learning residual rotations to align the canonical pose to the upright and forward-facing state.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <!-- 标题 -->
+    <h2 class="title is-3 has-text-centered mb-5">Data Generation</h2>
+    <div class="hero-body p-0">
+      
+      <!-- 视频容器 -->
+      <figure class="image style="width: 90%; max-width: 1200px; margin: 0 auto">
+        <video 
+          class="has-ratio" 
+          controls 
+          autoplay 
+          loop 
+          muted
+          style="border-radius: 6px; background: #f5f5f5; width: 100%; height: auto"
+        >
+          <source src="./static/images/Data_Generation.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </figure>
+
+      <!-- 描述文本 -->
+      <div class="content has-text-centered mt-4" style="max-width: 800px; margin: 0 auto">
+        <p class="is-size-5">
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+  
+
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3" style="text-align: center;">Results</h2>
+    <hr>
+    <div class="columns">
+      <div class="column is-one-quarter has-text-centered">Input with pose variations</div>
+      <div class="column is-one-quarter has-text-centered">Our Canonical Shape Representation</div>
+      <div class="column is-one-quarter has-text-centered">Input with pose variations</div>
+      <div class="column is-one-quarter has-text-centered">Our Canonical Shape Representation</div>
+    </div>
+    <div class="columns is-multiline">
+      <!-- Adding N rows and 3 columns of images (animated gifs) -->
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/plane0_inputx.gif" alt="GIF 1">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/plane0_normx.gif" alt="GIF 1">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/plane4_inputx.gif" alt="GIF 2">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/plane4_normx.gif" alt="GIF 2">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/car3_inputx.gif" alt="GIF 3">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/car3_normx.gif" alt="GIF 3">
+        </figure>
+      </div>
+
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/car4_inputx.gif" alt="GIF 4">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/car4_normx.gif" alt="GIF 3">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/chair4_inputx.gif" alt="GIF 5">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/chair4_normx.gif" alt="GIF 5">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/chair5_inputx.gif" alt="GIF 6">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/chair5_normx.gif" alt="GIF 6">
+        </figure>
+      </div>
+
+
+
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/lamp3_inputx.gif" alt="GIF 3">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/lamp3_normx.gif" alt="GIF 3">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/lamp7_inputx.gif" alt="GIF 3">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/lamp7_normx.gif" alt="GIF 3">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/firearm1_inputx.gif" alt="GIF 3">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/firearm1_normx.gif" alt="GIF 3">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/firearm2_inputx.gif" alt="GIF 3">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/firearm2_normx.gif" alt="GIF 3">
+        </figure>
+      </div>
+      
+
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/cellphone0_inputx.gif" alt="GIF 3">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/cellphone0_normx.gif" alt="GIF 3">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/cellphone1_inputx.gif" alt="GIF 3">
+        </figure>
+      </div>  
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/cellphone1_normx.gif" alt="GIF 3">
+        </figure>
+      </div>  
+      
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/monitor2_inputx.gif" alt="GIF 3">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/monitor2_normx.gif" alt="GIF 3">
+        </figure>
+      </div>
+
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/bench55_inputx.gif" alt="GIF 3">
+        </figure>
+      </div>
+      <div class="column is-one-quarter">
+        <figure class="image">
+          <img src="./static/images/bench55_normx.gif" alt="GIF 3">
+        </figure>
+      </div>
+
+      <!-- Add more gif images as needed to create N rows -->
+    </div>
+
+    <hr>
+    <div class="columns">
+      <div class="column is-one-third has-text-centered">Input with shape variations</div>
+      <div class="column is-one-third has-text-centered">Our Canonical Shape Representation</div>
+      <div class="column is-one-third has-text-centered">ShapeNet (manual alignment) </div>
+    </div>
+    <div class="hero-body">
+      <img id="teaser-image" src="./static/images/dingxing_much.png" alt="Nerfies teaser" height="100%">
+      <p class="content has-text-justified">
+        <strong> We offer a novel perspective：</strong> transforming in-the-wild, unaligned point cloud data into physically meaningful aligned datasets without
+        relying on any pose annotations. In these datasets, the aligned axes are synchronized with the Euclidean coordinate system 
+        (e.g., airplane cockpits are always aligned with \( +\mathrm{Y} \), and car wheels always touch \( \mathrm{Z} = 0 \)).
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3" style="text-align: center;">Robot Placement Task</h2>
+    <hr>
+    <div class="columns">
+      <div class="column is-half has-text-centered">First-Person View</div>
+      <div class="column is-half has-text-centered">Third-Person View</div>
+    </div>
+    <!-- 视频行（一行两列） -->
+    <div class="columns is-multiline">
+      <!-- 视频组 1 -->
+      <div class="column is-half">
+        <figure class="image">
+          <video controls autoplay loop muted style="max-height: 800px">
+            <source src="./static/images/3d_robo.mp4" type="video/mp4">
+          </video>
+        </figure>
+      </div>
+      <div class="column is-half">
+        <figure class="image">
+          <video controls autoplay loop muted style="max-height: 800px">
+            <source src="./static/images/robo.mp4" type="video/mp4">
+          </video>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link" href="https://github.com/anonymity15333/CAP" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            This webpage is modified based on the template provided by <a
+              href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>, and we thank them for their contributions.  
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
